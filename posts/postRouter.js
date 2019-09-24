@@ -1,8 +1,12 @@
-const express = 'express';
+const express = 'express'; // update syntax?
+
+// import database
+const postDb = require('./postDb')
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
+    res.send("you found me");
 
 });
 
