@@ -1,7 +1,7 @@
 // dependencies
 const express = require("express");
-const helmet = require("helmet");
-const cors = require("cors");
+// const helmet = require("helmet");
+// const cors = require("cors");
 
 // initiate server instance
 const server = express();
@@ -10,15 +10,15 @@ const server = express();
 const postRoutes = require("./posts/postRouter");
 const userRoutes = require("./users/userRouter");
 
+// middleware
+server.use(express.json());
+// server.use(helmet());
+// server.use(cors());
+
 // declare routes
 
 server.use("/posts", postRoutes);
 server.use("/users", userRoutes);
-
-// middleware
-server.use(express.json());
-server.use(helmet());
-server.use(cors());
 
 // server.get("/", (req, res) => {
 //   res.send(`<h2>Let's write some middleware!</h2>`);
