@@ -15,8 +15,12 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res) => {
   const { id } = req.params;
+
   postDb.getById(id)
   .then(post => {
+    if (!post) {
+      res.status(404).json({message: "No post with that id"})
+    }
     res.status(200).json(post);
   })
   .catch(() => {
@@ -24,7 +28,24 @@ router.get("/:id", (req, res) => {
   })
 });
 
-router.delete("/:id", (req, res) => {});
+router.delete("/:id", (req, res) => {
+ const { id } = req.params;
+
+ postDb.remove(id)
+ .then(recordNumber => {
+
+  if (!recordNumber) {
+    res.status(404).json({message: "No record with that id"})
+  }
+
+   res.status(200).json({message: `${recordNumber} number of records deleted`})
+ })
+ .catch(() => {
+   res.status(500).json({message: "error deleting record"})
+ })
+
+
+});
 
 router.put("/:id", (req, res) => {});
 
