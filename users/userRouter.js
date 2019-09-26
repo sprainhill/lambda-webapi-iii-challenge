@@ -46,7 +46,24 @@ router.get("/:id/posts", (req, res) => {
     });
 });
 
-router.delete("/:id", (req, res) => {});
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+
+  userDb
+    .remove(id)
+    .then(recordNumber => {
+      if (!recordNumber) {
+        res.status(404).json({ message: "No record with that id" });
+      }
+
+      res
+        .status(200)
+        .json({ message: `${recordNumber} number of records deleted` });
+    })
+    .catch(() => {
+      res.status(500).json({ message: "error deleting record" });
+    });
+});
 
 router.put("/:id", (req, res) => {});
 
