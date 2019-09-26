@@ -47,7 +47,31 @@ router.delete("/:id", (req, res) => {
 
 });
 
-router.put("/:id", (req, res) => {});
+router.put("/:id", (req, res) => {
+  // const { id } = req.params;
+  // const { text, user_id } = req.body;
+  const updatePost = req.body;
+
+  console.log("put updatePost", updatePost);
+  // console.log("put id", id);
+  console.log("put req.params", req.params);
+
+
+  // postDb.update(id, req.body)
+  // .then(recordNumber => {
+  //   if (!recordNumber) {
+  //     res.status(404).json({message: "No post found by that id"})
+  //   } else {
+  //     res.status(200).json(`${recordNumber} of records updated`)
+      
+  //   }
+  // })
+  // .catch( () => {
+  //   res.status(500).json({message: "error updating post"})
+  // })
+
+
+});
 
 // custom middleware
 
