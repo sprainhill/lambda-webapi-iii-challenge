@@ -16,12 +16,23 @@ router.get("/", (req, res) => {
     .then(users => {
       res.status(200).json(users);
     })
-    .catch(error => {
-      res.status(500).json(error);
+    .catch(() => {
+      res.status(500).json({ message: "Error retrieving users" });
     });
 });
 
-router.get("/:id", (req, res) => {});
+router.get("/:id", (req, res) => {
+  const { id } = req.params;
+
+  userDb
+    .getById(id)
+    .then(user => {
+      res.status(200).json(user);
+    })
+    .catch(() => {
+      res.status(500).json({ message: "Error retrieving user" });
+    });
+});
 
 router.get("/:id/posts", (req, res) => {});
 
