@@ -34,7 +34,17 @@ router.get("/:id", (req, res) => {
     });
 });
 
-router.get("/:id/posts", (req, res) => {});
+router.get("/:id/posts", (req, res) => {
+  const { id } = req.params;
+  userDb
+    .getUserPosts(id)
+    .then(posts => {
+      res.status(200).json(posts);
+    })
+    .catch(() => {
+      res.status(500).json({ message: "Error retrieving posts by user id" });
+    });
+});
 
 router.delete("/:id", (req, res) => {});
 
