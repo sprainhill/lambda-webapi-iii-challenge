@@ -24,6 +24,11 @@ server.use("/users", userRoutes);
 server.use(function(req, res) {
   res.status(404).send("Ain't nobody got time for that");
 });
+server.use((err, req, res, next) => {
+  console.log(err);
+
+  res.status(500).json({ message: "There was an error" });
+});
 
 //custom middleware
 
@@ -38,22 +43,9 @@ function logger(req, res, next) {
 
 function atGate(req, res, next) {
   console.log(`At the gate, about to be eaten`);
-
   next();
 }
 
-function auth(req, res, next) {
-  if (req.url === "/mellon") {
-    next();
-  } else {
-    res.json("You shall not pass!");
-  }
-}
-
-server.get("/mellon", auth, (req, res) => {
-  console.log("Gate opening...");
-  console.log("Inside and safe");
-  res.send("Welcome weary traveler");
-});
+console.log("");
 
 module.exports = server;

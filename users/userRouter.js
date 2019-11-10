@@ -1,5 +1,6 @@
 // instantiate router
 const router = require("express").Router();
+const path = require("path");
 
 //import database
 const userDb = require("./userDb");
@@ -19,6 +20,35 @@ router.get("/", (req, res) => {
     .catch(() => {
       res.status(500).json({ message: "Error retrieving users" });
     });
+});
+
+function auth(req, res, next) {
+  if (req.url === "/mellon") {
+    next();
+  } else {
+    res.send("You shall not pass!");
+  }
+}
+
+router.get("/mellon", auth, (req, res) => {
+  console.log("Gate opening...");
+  console.log("Inside and safe");
+  res.json("Welcome weary traveler");
+});
+
+router.get("/download", (req, res, next) => {
+  const filePath = path.join(__dirname, "index.html");
+  res.sendFile(filePath, err => {
+    // if there is an error the callback fn will
+    // get an error as its first argument
+    if (err) {
+      // can handle error here or pass down to
+      // error handling middleware
+      next(err);
+    } else {
+      console.log("File sent successfully");
+    }
+  });
 });
 
 router.get("/:id", (req, res) => {
