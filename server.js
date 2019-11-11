@@ -3,6 +3,8 @@ const express = require("express");
 const helmet = require("helmet"); // third party middleware
 const morgan = require("morgan");
 // const cors = require("cors");
+const { testmw, logger } = require("./middleware/middleware");
+// const test = middleware.testmw;
 
 // initiate server instance
 const server = express();
@@ -12,22 +14,22 @@ const postRoutes = require("./posts/postRouter");
 const userRoutes = require("./users/userRouter");
 
 // global middleware queue
-server.use(passwordReader);
 server.use(express.json());
 server.use(helmet());
+// server.use(passwordReader);
 server.use(morgan("dev"));
 // server.use(cors());
 // server.use(returnReqBody);
-// server.use(logger);
+server.use(logger);
 
 // declare routes
 
 server.use("/posts", postRoutes);
 server.use("/users", userRoutes);
 
-server.get("/", (req, res) => {
-  console.log("home reached");
-  res.json({ message: "home reached" });
+server.get("/", doubler, testmw, (req, res) => {
+  console.log("req.body", req.body);
+  res.status(200).json({ number: req.doubled });
 });
 
 // server.use(validateUserId);
@@ -40,17 +42,6 @@ server.use((err, req, res, next) => {
   res.status(500).json({ message: "There was an error" });
 });
 
-//custom middleware
-
-function logger(req, res, next) {
-  console.log(
-    `[${new Date().toISOString()}] ${req.method} to ${req.url} from ${req.get(
-      "Origin"
-    )}`
-  );
-  next();
-}
-
 // function returnReqBody(req, res, next) {
 //   console.log("req.body: ", req.body);
 //   res.json({ reqBody: req.body });
@@ -58,20 +49,35 @@ function logger(req, res, next) {
 //   next();
 // }
 
+// function validateUserId((id, req, res, next) => {
+//     console.log("id : ", id)
+//     console.log("req : ", req)
+// })
+
 function passwordReader(req, res, next) {
   console.log("in passwordReader");
   const password = req.headers.password;
 
   if (password.toLowerCase() === "mellon") {
+    // password exists and is correct
+    res.status(200).json({ message: "password correct" });
     next();
-  } else {
-    res.status(400).json({ you: "you cannot pass!" });
+  } else if (password && password !== "mellon") {
+    // password exists but is incorrect
+    res.status(500).json({ message: "password incorrect" });
+  } else if (!password) {
+    // password doesnt exist
+    res.status(400).json({ message: "please provide a password" });
   }
 }
 
-// function validateUserId((id, req, res, next) => {
-//     console.log("id : ", id)
-//     console.log("req : ", req)
-// })
+function doubler(req, res, next) {
+  // everything coming from the url is a string
+
+  const number = Number(req.query.number || 0);
+
+  req.doubled = number * 2;
+  next();
+}
 
 module.exports = server;
