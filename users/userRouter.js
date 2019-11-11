@@ -51,6 +51,21 @@ router.get("/download", (req, res, next) => {
   });
 });
 
+router.get("/test/:id", (req, res, next) => {
+  const filePath = path.join(__dirname, "index.html");
+  res.sendFile(filePath, err => {
+    // if there is an error the callback fn will
+    // get an error as its first argument
+    if (err) {
+      // can handle error here or pass down to
+      // error handling middleware
+      next(err);
+    } else {
+      console.log("File sent successfully");
+    }
+  });
+});
+
 router.get("/:id", (req, res) => {
   const { id } = req.params;
 
