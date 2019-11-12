@@ -5,7 +5,16 @@ const path = require("path");
 //import database
 const userDb = require("./userDb");
 
-router.post("/", (req, res) => {});
+router.post("/", validateUser, (req, res) => {
+  userDb
+    .insert(req.body)
+    .then(user => {
+      res.status(201).json(user);
+    })
+    .catch(() => {
+      res.status(500).json({ message: "Error creating new user" });
+    });
+});
 
 router.post("/:id/posts", (req, res) => {});
 
@@ -136,7 +145,18 @@ function validateUserId(req, res, next) {
     });
 }
 
-function validateUser(req, res, next) {}
+function validateUser(req, res, next) {
+  const body = req.body;
+  const name = req.body.name;
+
+  if (!body) {
+    res.status(400).json({ message: "user details required" });
+  } else if (!name) {
+    res.status(400).json({ message: "user name required" });
+  } else {
+    next();
+  }
+}
 
 function validatePost(req, res, next) {}
 
