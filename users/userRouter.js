@@ -4,6 +4,7 @@ const path = require("path");
 
 //import database
 const userDb = require("./userDb");
+const postDb = require("../posts/postDb");
 
 router.post("/", validateUser, (req, res) => {
   userDb
@@ -16,7 +17,18 @@ router.post("/", validateUser, (req, res) => {
     });
 });
 
-router.post("/:id/posts", (req, res) => {});
+router.post("/:id/posts", validateUserId, validatePost, (req, res) => {
+  const userPost = { ...req.body, user_id: req.params.id };
+  // const { id } = req.params;
+  postDb
+    .insert(userPost)
+    .then(post => {
+      res.status(201).json(post);
+    })
+    .catch(() => {
+      res.status(500).json({ message: `Error creating post for user {id}` });
+    });
+});
 
 router.get("/", (req, res) => {
   console.log("inside userRouter get /");
@@ -158,6 +170,17 @@ function validateUser(req, res, next) {
   }
 }
 
-function validatePost(req, res, next) {}
+function validatePost(req, res, next) {
+  const post = req.body;
+  const text = req.body;
+
+  if (!post) {
+    res.status(400).json({ message: "post required" });
+  } else if (!text) {
+    res.status(400).json({ message: "text field required" });
+  } else {
+    next();
+  }
+}
 
 module.exports = router;
