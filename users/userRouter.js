@@ -66,17 +66,19 @@ router.get("/test/:id", (req, res, next) => {
   });
 });
 
-router.get("/:id", (req, res) => {
-  const { id } = req.params;
+router.get("/:id", validateUserId, (req, res) => {
+  // const { id } = req.params;
+  console.log("req", req);
+  return res.json({ user: req.user });
 
-  userDb
-    .getById(id)
-    .then(user => {
-      res.status(200).json(user);
-    })
-    .catch(() => {
-      res.status(500).json({ message: "Error retrieving user" });
-    });
+  // userDb
+  //   .getById(id)
+  //   .then(user => {
+  //     res.status(200).json(user);
+  //   })
+  //   .catch(() => {
+  //     res.status(500).json({ message: "Error retrieving user" });
+  //   });
 });
 
 router.get("/:id/posts", (req, res) => {
@@ -114,7 +116,25 @@ router.put("/:id", (req, res) => {});
 
 //custom middleware
 
-function validateUserId(req, res, next) {}
+function validateUserId(req, res, next) {
+  const { id } = req.params;
+
+  userDb
+    .getById(id)
+    .then(user => {
+      if (user) {
+        req.user = user;
+        next();
+      } else {
+        res.status(404).json({ error: "error retrieving (validateUserId)" });
+      }
+    })
+    .catch(() => {
+      req.error = res
+        .status(500)
+        .json({ message: "Something went wrong retrieving user by id" });
+    });
+}
 
 function validateUser(req, res, next) {}
 

@@ -3,7 +3,7 @@ const express = require("express");
 const helmet = require("helmet"); // third party middleware
 const morgan = require("morgan");
 // const cors = require("cors");
-const { testmw, logger } = require("./middleware/middleware");
+const { logger } = require("./middleware/middleware");
 // const test = middleware.testmw;
 
 // initiate server instance
@@ -27,7 +27,7 @@ server.use(logger);
 server.use("/posts", postRoutes);
 server.use("/users", userRoutes);
 
-server.get("/", doubler, testmw, (req, res) => {
+server.get("/", doubler, (req, res) => {
   console.log("req.body", req.body);
   res.status(200).json({ number: req.doubled });
 });
